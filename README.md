@@ -1,6 +1,6 @@
 
 
-# 🌉 Smart Bridge Monitoring System (IoT + AI + Firebase)
+# 🌉 Smart Bridge Monitoring System (IoT + DL + Firebase)
 
 A real-time **structural health monitoring system** using **Raspberry Pi**, **AI-based crack detection**, and **Firebase** for web visualization. The system monitors **vibration**, **tilt**, and **cracks** in bridges and sends alerts when unsafe conditions are detected.
 
