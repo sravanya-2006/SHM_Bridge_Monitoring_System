@@ -109,3 +109,8 @@ The Pi handles critical alerts based on **sensor readings** and **AI predictions
 * Ensure the Pi and Laptop are on the same network for TCP communication.
 * Use **App Passwords** for email to avoid authentication issues.
 * Adjust alert thresholds in `testdone.py` as per bridge safety requirements.
+
+## Crack Detection 
+The crack detection module in this project uses my custom InceptionV3 deep-learning model, which is implemented and trained in a separate repository linked here.
+https://github.com/sravanya-2006?tab=repositories
+
