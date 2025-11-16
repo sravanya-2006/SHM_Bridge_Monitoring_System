@@ -13,7 +13,7 @@ try:
     model = tf.keras.models.load_model("crack_detection.h5")
     print("[INFO] Model loaded successfully.")
 except Exception as e:
-    print(f"[ERROR] Could not load model 'inception_model.h5': {e}")
+    print(f"[ERROR] Could not load model 'crack_detection.h5': {e}")
     exit()
 
 # ---------------- CONNECTION CONFIG ----------------
@@ -184,4 +184,5 @@ if __name__ == "__main__":
         if client_socket:
             client_socket.close()
         cv2.destroyAllWindows()
+
         print("[INFO] Cleanup complete. Goodbye!")
