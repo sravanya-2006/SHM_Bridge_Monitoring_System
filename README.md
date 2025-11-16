@@ -112,5 +112,4 @@ The Pi handles critical alerts based on **sensor readings** and **AI predictions
 
 ## Crack Detection 
 The crack detection module in this project uses my custom InceptionV3 deep-learning model, which is implemented and trained in a separate repository linked here.
-https://github.com/sravanya-2006?tab=repositories
-
+https://github.com/sravanya-2006/Crack_Detection_Modell.git
