@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bridge Monitoring Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #0b132b;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #5bc0be;
+      margin-top: 20px;
+    }
+    .chart-container {
+      width: 90%;
+      max-width: 900px;
+      margin: 30px auto;
+      background: #1c2541;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(91, 192, 190, 0.2);
+    }
+    canvas {
+      width: 100%;
+      height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bridge Vibration & Tilt Dashboard</h1>
+
+  <div class="chart-container">
+    <h2>Vibration Over Time</h2>
+    <canvas id="vibrationChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h2>Pitch & Roll Over Time</h2>
+    <canvas id="angleChart"></canvas>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+    // ✅ Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY", // <-- Replace with your actual API key
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com", // <-- Replace YOUR_PROJECT_ID
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com", // <-- Replace YOUR_PROJECT_ID (Optional if not using Realtime Database)
+      projectId: "YOUR_PROJECT_ID", // <-- Replace with your actual Project ID
+      storageBucket: "YOUR_PROJECT_ID.appspot.com", // <-- Replace YOUR_PROJECT_ID
+      messagingSenderId: "YOUR_SENDER_ID", // <-- Replace with your actual Sender ID
+      appId: "YOUR_APP_ID" // <-- Replace with your actual App ID
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const refData = ref(db, "bridge_data"); // ✅ change to your node name
+
+    // --- Chart 1: Vibration ---
+    const ctx1 = document.getElementById("vibrationChart").getContext("2d");
+    const vibrationChart = new Chart(ctx1, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [{
+          label: "Vibration Detected (1=Yes, 0=No)",
+          borderColor: "#5bc0be",
+          backgroundColor: "rgba(91,192,190,0.2)",
+          data: [],
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: "Vibration (0/1)" } },
+          x: { title: { display: true, text: "Time" } }
+        }
+      }
+    });
+
+    // --- Chart 2: Pitch & Roll ---
+    const ctx2 = document.getElementById("angleChart").getContext("2d");
+    const angleChart = new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "Pitch (°)",
+            borderColor: "#ffca3a",
+            backgroundColor: "rgba(255,202,58,0.2)",
+            data: [],
+            tension: 0.3
+          },
+          {
+            label: "Roll (°)",
+            borderColor: "#ff595e",
+            backgroundColor: "rgba(255,89,94,0.2)",
+            data: [],
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: "Angle (°)" } },
+          x: { title: { display: true, text: "Time" } }
+        }
+      }
+    });
+
+    // --- Listen for Firebase Data ---
+    onValue(refData, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const entries = Object.values(data).slice(-20); // last 20 points
+      const times = entries.map(e => e.time);
+      const vibrations = entries.map(e => e.vibration);
+      const pitch = entries.map(e => e.pitch);
+      const roll = entries.map(e => e.roll);
+
+      // Update Vibration Chart
+      vibrationChart.data.labels = times;
+      vibrationChart.data.datasets[0].data = vibrations;
+      vibrationChart.update();
+
+      // Update Angle Chart
+      angleChart.data.labels = times;
+      angleChart.data.datasets[0].data = pitch;
+      angleChart.data.datasets[1].data = roll;
+      angleChart.update();
+    });
+  </script>
+</body>
+</html>
